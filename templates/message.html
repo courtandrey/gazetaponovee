@@ -1,0 +1,8 @@
+{{define "title"}}{{.Heading}}. {{end}}
+{{define "content"}}
+<section class="plain">
+  <h1>{{.Heading}}</h1>
+  <p>{{.Text}}</p>
+  <p>{{if .Link}}<a class="btn" href="{{.Link}}">{{.LinkText}}</a> {{end}}<a class="btn btn-quiet" href="/">К новостям</a></p>
+</section>
+{{end}}

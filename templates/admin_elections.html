@@ -1,0 +1,77 @@
+{{define "title"}}Выборы: управление. {{end}}
+{{define "content"}}
+<section class="desk">
+  <h1>Выборы</h1>
+
+  <form class="panel" method="post" action="/admin/elections/settings">
+    <h2>Раздел на сайте</h2>
+    <label class="check"><input type="checkbox" name="visible"{{if .E.Visible}} checked{{end}}> Показывать раздел «Выборы» читателям</label>
+    <label>Заголовок раздела
+      <input name="title" value="{{.E.Title}}" maxlength="120">
+    </label>
+    <p class="meta">{{if .E.Visible}}Раздел открыт: ссылка в меню и счёт на главной.{{else}}Раздел скрыт. Вам он доступен по <a href="/elections">прямой ссылке</a>.{{end}}</p>
+    <button class="btn">Сохранить</button>
+  </form>
+
+  <section class="panel" id="candidates">
+    <h2>Кандидаты в президенты</h2>
+    {{range .E.Candidates}}<form class="line" method="post" action="/admin/elections/candidate">
+      <input type="hidden" name="id" value="{{.ID}}">
+      <label>Имя <input name="name" value="{{.Name}}" maxlength="80" required></label>
+      <label>Партия <input name="party" value="{{.Party}}" maxlength="80"></label>
+      <label>Цвет <input type="color" name="color" value="{{.Color}}"></label>
+      <button class="btn btn-quiet" name="action" value="save">Сохранить</button>
+      <button class="btn btn-wax" name="action" value="delete" formnovalidate title="Объявленные за него штаты снимутся">Удалить</button>
+    </form>{{else}}<p class="empty">Кандидатов пока нет. Добавьте первого.</p>{{end}}
+    <form class="line line-new" method="post" action="/admin/elections/candidate">
+      <label>Имя <input name="name" maxlength="80" required></label>
+      <label>Партия <input name="party" maxlength="80"></label>
+      <label>Цвет <input type="color" name="color" value="{{if .E.Candidates}}#1f4e9c{{else}}#9e1b32{{end}}"></label>
+      <button class="btn">Добавить кандидата</button>
+    </form>
+  </section>
+
+  <section class="panel" id="calls">
+    <h2>Объявить штаты</h2>
+    {{if .E.Candidates}}
+    {{template "score" .E}}
+    <div class="callgrid">
+    {{range $s := .E.States}}<form class="call" method="post" action="/admin/elections/call">
+      <input type="hidden" name="state" value="{{$s.ID}}">
+      <span class="call-state"><b>{{$s.Name}}</b> {{$s.Electors}} выб.</span>
+      <span class="call-btns">
+        {{range $.E.Candidates}}<button class="pick" name="candidate" value="{{.ID}}" style="{{.Swatch}}"{{if and $s.Winner (eq $s.Winner.ID .ID)}} aria-pressed="true"{{end}}>{{.Name}}</button>{{end}}
+        {{if $s.Winner}}<button class="btn btn-quiet" name="candidate" value="0">Снять</button>{{end}}
+      </span>
+    </form>{{end}}
+    </div>
+    {{else}}<p class="empty">Сначала добавьте кандидатов.</p>{{end}}
+  </section>
+
+  <section class="panel" id="senate">
+    <h2>Выборы в Сенат</h2>
+    <p class="meta">Добавьте гонку за каждое место, которое разыгрывается. Когда победитель известен, впишите его имя, партию и цвет. Пустое имя победителя означает «подсчёт идёт».</p>
+    {{range .E.Senate}}{{$race := .}}<form class="line" method="post" action="/admin/elections/senate">
+      <input type="hidden" name="id" value="{{.ID}}">
+      <label>Штат <select name="state">{{range $.StateDefs}}<option value="{{.ID}}"{{if eq .ID $race.State}} selected{{end}}>{{.Name}}</option>{{end}}</select></label>
+      <label class="grow">Кандидаты <input name="contenders" value="{{.Contenders}}" maxlength="200"></label>
+      <label>Победитель <input name="winner" value="{{.Winner}}" maxlength="80"></label>
+      <label>Партия <input name="party" value="{{.Party}}" maxlength="80"></label>
+      <label>Цвет <input type="color" name="color" value="{{if .Color}}{{.Color}}{{else}}#5b2a86{{end}}"></label>
+      <button class="btn btn-quiet" name="action" value="save">Сохранить</button>
+      <button class="btn btn-wax" name="action" value="delete">Удалить</button>
+    </form>{{end}}
+    <form class="line line-new" method="post" action="/admin/elections/senate">
+      <label>Штат <select name="state">{{range .StateDefs}}<option value="{{.ID}}">{{.Name}}</option>{{end}}</select></label>
+      <label class="grow">Кандидаты <input name="contenders" maxlength="200" placeholder="Имена через запятую"></label>
+      <button class="btn">Добавить гонку</button>
+    </form>
+  </section>
+
+  <details class="danger">
+    <summary>Сбросить результаты</summary>
+    <p>Снимет все объявленные штаты и победителей в Сенате. Кандидаты и гонки останутся.</p>
+    <form method="post" action="/admin/elections/reset"><button class="btn btn-wax">Сбросить все результаты</button></form>
+  </details>
+</section>
+{{end}}

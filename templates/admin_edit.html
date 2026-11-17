@@ -1,0 +1,60 @@
+{{define "title"}}{{if eq .A.Status "new"}}Новый материал{{else}}Правка{{end}}. {{end}}
+{{define "content"}}
+<section class="plain">
+  <h1>{{if eq .A.Status "new"}}Новый материал{{else}}Правка материала{{end}}</h1>
+  {{if ne .A.Status "new"}}<p class="meta">Статус: {{if eq .A.Status "published"}}опубликован, <a href="/a/{{.A.ID}}">открыть на сайте</a>{{else if eq .A.Status "rejected"}}отклонён{{else}}на рассмотрении, <a href="/a/{{.A.ID}}">посмотреть, как будет выглядеть</a>{{end}}</p>{{end}}
+  {{if .Saved}}<p class="ok" role="status">Сохранено.</p>{{end}}
+  {{if .Error}}<p class="error" role="alert">{{.Error}}</p>{{end}}
+  <form class="form" method="post" action="/admin/a/{{if eq .A.Status "new"}}new{{else}}{{.A.ID}}{{end}}" enctype="multipart/form-data">
+    <label>Заголовок
+      <input name="title" value="{{.A.Title}}" maxlength="200" required>
+    </label>
+    <div class="form-row">
+      <label>Подпись автора
+        <input name="author" value="{{.A.Author}}" maxlength="80" placeholder="Пусто — «Редакция»">
+      </label>
+      <label>Рубрика
+        <select name="rubric">
+          <option value="">Без рубрики</option>
+          {{range .Rubrics}}<option value="{{.Slug}}"{{if eq .Slug $.A.Rubric}} selected{{end}}>{{.Name}}</option>{{end}}
+        </select>
+      </label>
+    </div>
+    <label>Текст
+      <textarea name="body" rows="20" maxlength="50000" required>{{.A.Body}}</textarea>
+    </label>
+    {{template "markup-help" .}}
+    {{if .A.Images}}<fieldset class="pics">
+      <legend>Изображения</legend>
+      {{range $i, $im := .A.Images}}<label class="pic">
+        <img src="/uploads/{{$im.File}}" alt="">
+        <span>{{if eq $i 0}}Обложка{{else}}Фото {{inc $i}}{{end}}</span>
+        <span><input type="checkbox" name="del_image" value="{{$im.ID}}"> удалить</span>
+      </label>{{end}}
+    </fieldset>{{end}}
+    <label>Добавить изображения
+      <input type="file" name="images" accept="image/jpeg,image/png,image/gif,image/webp" multiple>
+      <small>До {{.MaxImages}} файлов за раз, каждый до {{.MaxImageMB}} МБ.</small>
+    </label>
+    <div class="checks">
+      <label><input type="checkbox" name="pinned"{{if .A.Pinned}} checked{{end}}> Закрепить наверху главной</label>
+      <label><input type="checkbox" name="breaking"{{if .A.Breaking}} checked{{end}}> Показывать в строке «Срочно»</label>
+    </div>
+    <div class="actions">
+      {{if eq .A.Status "published"}}
+        <button class="btn" name="action" value="save">Сохранить</button>
+        <button class="btn btn-quiet" name="action" value="unpublish">Сохранить и снять с публикации</button>
+      {{else}}
+        <button class="btn" name="action" value="publish">Сохранить и опубликовать</button>
+        <button class="btn btn-quiet" name="action" value="save">Сохранить без публикации</button>
+        {{if eq .A.Status "pending"}}<button class="btn btn-quiet" name="action" value="reject">Отклонить</button>{{end}}
+      {{end}}
+    </div>
+    {{if ne .A.Status "new"}}<details class="danger">
+      <summary>Удалить материал</summary>
+      <p>Материал и его изображения исчезнут насовсем.</p>
+      <button class="btn btn-wax" name="action" value="delete" formnovalidate>Удалить навсегда</button>
+    </details>{{end}}
+  </form>
+</section>
+{{end}}

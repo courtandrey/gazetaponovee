@@ -1,0 +1,43 @@
+{{define "title"}}{{if .Rubric}}{{rubric .Rubric}}. {{end}}{{end}}
+{{define "content"}}
+{{if .E}}<section class="teaser">
+  <h2 class="teaser-head"><a href="/elections">{{.E.Title}}</a></h2>
+  {{if .E.Winner}}<p class="verdict">Президентом избран {{.E.Winner.Name}}</p>{{end}}
+  {{template "score" .E}}
+  <p class="teaser-more"><a href="/elections">Открыть карту выборов</a></p>
+</section>{{end}}
+
+{{if .Rubric}}<h1 class="rubric-head">{{rubric .Rubric}}</h1>{{end}}
+
+{{if .Pinned}}<section class="pinned" aria-labelledby="pinned-head">
+  <h2 class="pinned-head" id="pinned-head">Главное</h2>
+  <div class="pinned-grid">
+  {{range .Pinned}}<article class="lead">
+    {{if .Cover}}<a class="lead-pic" href="/a/{{.ID}}" tabindex="-1"><img src="/uploads/{{.Cover}}" alt=""></a>{{end}}
+    <h3><a href="/a/{{.ID}}">{{.Title}}</a></h3>
+    <p class="lead-text">{{.Excerpt}}</p>
+    <p class="meta">{{.Byline}}, {{stamp .PublishedAt}}</p>
+  </article>{{end}}
+  </div>
+</section>{{end}}
+
+{{range .Days}}<section class="day">
+  <h2 class="day-head"><span>{{.Label}}</span></h2>
+  {{range .Items}}<article class="entry">
+    <time class="entry-time" datetime="{{.PublishedAt.Format "2006-01-02T15:04:05Z07:00"}}">{{clock .PublishedAt}}</time>
+    <div class="entry-body">
+      {{if .Cover}}<a class="entry-pic" href="/a/{{.ID}}" tabindex="-1"><img src="/uploads/{{.Cover}}" alt="" loading="lazy"></a>{{end}}
+      <h3>{{if .Breaking}}<b class="wax">Срочно</b> {{end}}<a href="/a/{{.ID}}">{{.Title}}</a></h3>
+      <p>{{.Excerpt}}</p>
+      <p class="meta">{{.Byline}}{{if .Rubric}}, <a href="/r/{{.Rubric}}">{{rubric .Rubric}}</a>{{end}}</p>
+    </div>
+  </article>{{end}}
+</section>{{else}}
+{{if not .Pinned}}<p class="empty">Здесь пока пусто. <a href="/submit">Пришлите материал</a> — редакция прочтёт.</p>{{end}}
+{{end}}
+
+{{if or .Prev .Next}}<nav class="pager" aria-label="Страницы">
+  {{if .Prev}}<a href="{{if .Rubric}}/r/{{.Rubric}}{{else}}/{{end}}?p={{.Prev}}">Новее</a>{{else}}<span></span>{{end}}
+  {{if .Next}}<a href="{{if .Rubric}}/r/{{.Rubric}}{{else}}/{{end}}?p={{.Next}}">Раньше</a>{{end}}
+</nav>{{end}}
+{{end}}

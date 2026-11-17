@@ -1,0 +1,64 @@
+{{define "layout"}}<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{block "title" .}}{{end}}Газета Поновее</title>
+<link rel="icon" href="/static/star.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/style.css?v={{.V}}">
+</head>
+<body>
+{{if .Urgent}}<aside class="urgent" aria-label="Срочные сообщения">
+  <b class="urgent-tag">Срочно</b>
+  <ul>{{range .Urgent}}<li><a href="/a/{{.ID}}">{{.Title}}</a></li>{{end}}</ul>
+</aside>{{end}}
+<header class="mast">
+  <svg class="mast-star" viewBox="0 0 100 100" aria-hidden="true"><polygon points="50.0,4.0 57.2,30.3 79.6,14.8 68.2,39.5 95.3,42.0 70.7,53.6 89.8,73.0 63.5,66.1 65.7,93.2 50.0,71.0 34.3,93.2 36.5,66.1 10.2,73.0 29.3,53.6 4.7,42.0 31.8,39.5 20.4,14.8 42.8,30.3"/></svg>
+  <a class="mast-name" href="/">Газета Поновее</a>
+  <p class="mast-motto">{{.Motto}}</p>
+  <p class="mast-date">{{.Today}}</p>
+</header>
+<nav class="nav" aria-label="Разделы">
+  <a href="/">Все новости</a>
+  {{range .Rubrics}}<a href="/r/{{.Slug}}">{{.Name}}</a>{{end}}
+  {{if .ElectionOn}}<a class="nav-vote" href="/elections">Выборы</a>{{end}}
+  <a class="nav-send" href="/submit">Прислать материал</a>
+</nav>
+{{if .IsAdmin}}<nav class="adminbar" aria-label="Редакция">
+  <span>Редакция</span>
+  <a href="/admin">Материалы</a>
+  <a href="/admin/a/new">Написать</a>
+  <a href="/admin/elections">Выборы</a>
+  <form method="post" action="/admin/logout"><button class="linklike">Выйти</button></form>
+</nav>{{end}}
+<main class="page">
+{{template "content" .}}
+</main>
+<footer class="foot">
+  <p>Газета Поновее. Издаётся в Девяти Штатах.</p>
+  <p><a href="/submit">Прислать материал</a><a href="/admin/login">Вход для редакции</a></p>
+</footer>
+</body>
+</html>{{end}}
+
+{{define "score"}}<div class="score">
+  <ul class="score-cands">
+    {{range .Candidates}}<li><span class="chip" style="{{.Swatch}}">{{.Votes}}</span><span><b>{{.Name}}</b>{{if .Party}}<i>{{.Party}}</i>{{end}}</span></li>{{end}}
+  </ul>
+  <div class="bar" role="img" aria-label="Голоса выборщиков: {{range .Candidates}}{{.Name}} {{.Votes}}, {{end}}не объявлено {{.Uncalled}}">
+    <div class="bar-fill">{{range .Bar}}<span style="{{.Style}}">{{.Label}}</span>{{end}}</div>
+    <span class="bar-mark"></span>
+  </div>
+  <p class="score-note">Для победы нужно {{.Need}} голосов выборщиков из {{.Total}}. Ещё не объявлено: {{.Uncalled}}.</p>
+</div>{{end}}
+
+{{define "markup-help"}}<details class="help">
+  <summary>Как оформить текст</summary>
+  <ul>
+    <li>Пустая строка начинает новый абзац.</li>
+    <li><code># Заголовок</code> и <code>## Подзаголовок</code> в начале абзаца.</li>
+    <li><code>**жирный**</code>, <code>*курсив*</code>, <code>[текст ссылки](https://адрес)</code>.</li>
+    <li><code>&gt; цитата</code> и <code>- пункт списка</code> в начале строки.</li>
+    <li><code>[фото 2]</code> отдельным абзацем ставит второе изображение в это место. Без этого изображения встанут после текста.</li>
+  </ul>
+</details>{{end}}

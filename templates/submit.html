@@ -1,0 +1,33 @@
+{{define "title"}}Прислать материал. {{end}}
+{{define "content"}}
+<section class="plain">
+  <h1>Прислать материал</h1>
+  <p>Новость, заметка, письмо в редакцию. Регистрация не нужна: редактор прочтёт текст и опубликует то, что подойдёт газете.</p>
+  {{if .Error}}<p class="error" role="alert">{{.Error}}</p>{{end}}
+  <form class="form" method="post" action="/submit" enctype="multipart/form-data">
+    <label>Заголовок
+      <input name="title" value="{{.In.Title}}" maxlength="200" required>
+    </label>
+    <div class="form-row">
+      <label>Подпись автора
+        <input name="author" value="{{.In.Author}}" maxlength="80" placeholder="Без подписи выйдет от редакции">
+      </label>
+      <label>Рубрика
+        <select name="rubric">
+          <option value="">На усмотрение редакции</option>
+          {{range .Rubrics}}<option value="{{.Slug}}"{{if eq .Slug $.In.Rubric}} selected{{end}}>{{.Name}}</option>{{end}}
+        </select>
+      </label>
+    </div>
+    <label>Текст
+      <textarea name="body" rows="16" maxlength="50000" required>{{.In.Body}}</textarea>
+    </label>
+    {{template "markup-help" .}}
+    <label>Изображения
+      <input type="file" name="images" accept="image/jpeg,image/png,image/gif,image/webp" multiple>
+      <small>До {{.MaxImages}} файлов, каждый до {{.MaxImageMB}} МБ. Первое станет обложкой.{{if .Error}} Выберите файлы заново: после ошибки они не сохраняются.{{end}}</small>
+    </label>
+    <button class="btn">Отправить в редакцию</button>
+  </form>
+</section>
+{{end}}

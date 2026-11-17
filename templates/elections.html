@@ -1,0 +1,50 @@
+{{define "title"}}{{.E.Title}}. {{end}}
+{{define "content"}}
+<section class="vote">
+  {{if not .E.Visible}}<p class="notice">Раздел скрыт от читателей. Его видит только редакция.</p>{{end}}
+  <h1>{{.E.Title}}</h1>
+  {{if .E.Winner}}<p class="verdict">Президентом избран {{.E.Winner.Name}}</p>{{end}}
+  {{if .E.Candidates}}{{template "score" .E}}{{else}}<p class="empty">Кандидаты ещё не объявлены.</p>{{end}}
+
+  <figure class="map-frame">
+    <svg class="map" viewBox="0 0 {{.E.W}} {{.E.H}}" role="img" aria-label="Карта Девяти Штатов: кто победил в каждом штате">
+      {{range .E.States}}<path class="state" d="{{.D}}"{{if .Fill}} style="{{.Fill}}"{{end}}><title>{{.Name}}, {{.Electors}} выб.: {{if .Winner}}{{.Winner.Name}}{{else}}не объявлено{{end}}</title></path>
+      {{end}}
+      {{range .E.States}}{{if index .Leader 0}}<line class="leader" x1="{{.LX}}" y1="{{.LY}}" x2="{{index .Leader 0}}" y2="{{index .Leader 1}}"/>{{end}}{{end}}
+      {{range .E.States}}<text class="lbl{{if index .Leader 0}} lbl-out{{end}}" x="{{.LX}}" y="{{.LY}}" font-size="{{.Size}}"{{if not (index .Leader 0)}}{{if ne .ID "arhipelag"}} style="{{.Ink}}"{{end}}{{end}}><tspan x="{{.LX}}"{{if index .Leader 0}} dy="1.1em"{{end}}>{{.Name}}</tspan><tspan class="lbl-n" x="{{.LX}}" dy="1.05em">{{.Electors}}</tspan></text>
+      {{end}}
+    </svg>
+    <figcaption>Число под названием штата — его выборщики. Незакрашенные штаты ещё не объявлены.</figcaption>
+  </figure>
+
+  <div class="vote-cols">
+    <section>
+      <h2>Штаты</h2>
+      <table class="table">
+        <thead><tr><th>Штат</th><th class="num">Выборщики</th><th>Победитель</th></tr></thead>
+        <tbody>{{range .E.States}}<tr>
+          <td>{{.Name}}</td><td class="num">{{.Electors}}</td>
+          <td>{{if .Winner}}<span class="dot" style="{{.Winner.Swatch}}"></span>{{.Winner.Name}}{{else}}<span class="muted">подсчёт идёт</span>{{end}}</td>
+        </tr>{{end}}</tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Хроника объявлений</h2>
+      {{if .E.Calls}}<ol class="calls">{{range .E.Calls}}
+        <li><time>{{clock .CalledAt}}</time><span><span class="dot" style="{{.Winner.Swatch}}"></span>{{.Name}} ({{.Electors}}) — {{.Winner.Name}}</span></li>{{end}}
+      </ol>{{else}}<p class="muted">Ни один штат пока не объявлен.</p>{{end}}
+    </section>
+  </div>
+
+  {{if .E.Senate}}<section class="senate">
+    <h2>Выборы в Сенат</h2>
+    <table class="table">
+      <thead><tr><th>Штат</th><th>Кандидаты</th><th>Победитель</th></tr></thead>
+      <tbody>{{range .E.Senate}}<tr>
+        <td>{{.StateName}}</td><td>{{.Contenders}}</td>
+        <td>{{if .Winner}}<span class="dot" style="{{.Swatch}}"></span>{{.Winner}}{{if .Party}} <i class="muted">{{.Party}}</i>{{end}}{{else}}<span class="muted">подсчёт идёт</span>{{end}}</td>
+      </tr>{{end}}</tbody>
+    </table>
+  </section>{{end}}
+</section>
+{{end}}

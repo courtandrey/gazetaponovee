@@ -1,0 +1,33 @@
+{{define "title"}}Материалы. {{end}}
+{{define "content"}}
+<section class="desk">
+  <h1>Материалы</h1>
+  <nav class="tabs" aria-label="Статус">
+    <a href="/admin?s=pending"{{if eq .Status "pending"}} aria-current="page"{{end}}>На рассмотрении ({{index .Counts "pending"}})</a>
+    <a href="/admin?s=published"{{if eq .Status "published"}} aria-current="page"{{end}}>Опубликованы ({{index .Counts "published"}})</a>
+    <a href="/admin?s=rejected"{{if eq .Status "rejected"}} aria-current="page"{{end}}>Отклонены ({{index .Counts "rejected"}})</a>
+    <a class="btn" href="/admin/a/new">Написать материал</a>
+  </nav>
+  {{range .Items}}<article class="desk-item">
+    {{if .Cover}}<img class="desk-pic" src="/uploads/{{.Cover}}" alt="" loading="lazy">{{end}}
+    <div class="desk-main">
+      <h2><a href="/admin/a/{{.ID}}">{{.Title}}</a>{{if .Pinned}} <span class="tag">закреплён</span>{{end}}{{if .Breaking}} <span class="tag tag-wax">срочно</span>{{end}}</h2>
+      <p>{{.Excerpt}}</p>
+      <p class="meta">{{.Byline}}{{if .Rubric}}, {{rubric .Rubric}}{{end}}, прислан {{stamp .CreatedAt}}{{if not .PublishedAt.IsZero}}, вышел {{stamp .PublishedAt}}{{end}}</p>
+    </div>
+    <form class="desk-acts" method="post" action="/admin/a/{{.ID}}/quick">
+      <input type="hidden" name="back" value="{{$.Status}}">
+      <a class="btn btn-quiet" href="/admin/a/{{.ID}}">Править</a>
+      {{if eq .Status "published"}}
+        {{if .Pinned}}<button class="btn btn-quiet" name="action" value="unpin">Открепить</button>{{else}}<button class="btn btn-quiet" name="action" value="pin">Закрепить</button>{{end}}
+        <button class="btn btn-quiet" name="action" value="unpublish">Снять с публикации</button>
+      {{else}}
+        <button class="btn" name="action" value="publish">Опубликовать</button>
+        {{if eq .Status "pending"}}<button class="btn btn-quiet" name="action" value="reject">Отклонить</button>{{end}}
+      {{end}}
+    </form>
+  </article>{{else}}
+  <p class="empty">{{if eq .Status "pending"}}Новых материалов нет.{{else}}В этом списке пусто.{{end}}</p>
+  {{end}}
+</section>
+{{end}}
