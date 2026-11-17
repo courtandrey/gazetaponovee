@@ -61,7 +61,6 @@ p { margin: 0 0 .8em; }
 .mast-name { display: block; font: 400 clamp(2.3rem, 8.4vw, 5.6rem)/1.05 var(--display); color: var(--gold-bright); text-decoration: none; text-shadow: 0 2px 0 #000, 0 0 2rem rgba(217, 184, 102, .25); margin: .2rem 0 .5rem; }
 .mast-name:hover { color: #f0d894; }
 .mast-motto { font-style: italic; font-size: 1.15rem; margin: 0 auto; max-width: 40rem; padding-top: .6rem; border-top: 3px double var(--gold); }
-.mast-date { margin: .3rem 0 0; font-size: .95rem; color: #bfaed0; }
 
 .nav { display: flex; flex-wrap: wrap; justify-content: center; gap: .1rem 1.5rem; background: var(--purple); padding: .5rem 1rem; border-block: 1px solid var(--gold); }
 .nav a { color: #fff; text-decoration: none; padding: .15rem 0; border-bottom: 1px solid transparent; }
@@ -96,18 +95,15 @@ p { margin: 0 0 .8em; }
 
 /* Хроника: время на полях, золотая нить вдоль дня */
 .rubric-head { font: 400 2.2rem/1.1 var(--display); color: var(--purple); margin-bottom: 1.5rem; }
-.day { margin-bottom: 2rem; }
-.day-head { display: flex; align-items: center; gap: 1rem; font-size: 1.05rem; font-style: italic; font-weight: 400; color: var(--muted); margin-bottom: .6rem; }
-.day-head::before, .day-head::after { content: ""; flex: 1; border-top: 1px solid var(--gold); }
-.entry { display: grid; grid-template-columns: 4.2rem 1fr; }
-.entry-time { position: relative; padding-top: 1.15rem; font-weight: 700; color: var(--purple); font-variant-numeric: tabular-nums; }
-.entry-body { position: relative; border-left: 1px solid var(--gold); padding: 1rem 0 1.2rem 1.6rem; }
-.entry-body::before { content: ""; position: absolute; left: -.38rem; top: 1.45rem; width: .7rem; height: .7rem; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 0 3px var(--vellum); }
-.entry-body::after { content: ""; display: block; clear: both; }
+.feed { border-left: 1px solid var(--gold); margin: 0 0 2rem .4rem; }
+.entry { position: relative; padding: 1rem 0 1.2rem 1.6rem; }
+.entry::before { content: ""; position: absolute; left: -.38rem; top: 1.45rem; width: .7rem; height: .7rem; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 0 3px var(--vellum); }
+.entry::after { content: ""; display: block; clear: both; }
 .entry h3 { font-size: 1.45rem; margin-bottom: .35rem; }
-.entry-body > p { margin-bottom: .3rem; max-width: 46rem; }
+.entry > p { margin-bottom: .3rem; max-width: 46rem; }
 .entry-pic { float: right; width: min(34%, 13rem); margin: .2rem 0 .5rem 1.2rem; }
 .entry-pic img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid var(--ink); }
+
 .empty { font-style: italic; color: var(--muted); text-align: center; padding: 2rem 0; }
 .pager { display: flex; justify-content: space-between; border-top: 3px double var(--gold); padding-top: 1rem; }
 
@@ -233,10 +229,7 @@ code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .85em; 
 
 @media (max-width: 34rem) {
   body { font-size: 1.05rem; }
-  .entry { grid-template-columns: 1fr; }
-  .entry-time { padding: .8rem 0 0 1.6rem; border-left: 1px solid var(--gold); }
-  .entry-body { padding-top: .1rem; }
-  .entry-body::before { top: -.75rem; }
+  .entry { padding-left: 1.1rem; }
   .entry-pic { float: none; display: block; width: 100%; margin: 0 0 .6rem; }
   .call { grid-template-columns: 1fr; }
   .desk-item { grid-template-columns: 1fr; }

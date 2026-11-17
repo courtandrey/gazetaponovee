@@ -30,25 +30,41 @@ func rubricName(slug string) string {
 	return ""
 }
 
-var (
-	months   = [...]string{"января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"}
-	weekdays = [...]string{"Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"}
-)
+// Мир вымышленный, поэтому календарных дат на сайте нет: только часы
+// (хроника выборов) и «сколько прошло» (в редакции).
+func clock(t time.Time) string { return t.Format("15:04") }
 
-func dayLabel(t time.Time) string {
-	return fmt.Sprintf("%d %s %d года", t.Day(), months[t.Month()-1], t.Year())
+// plural выбирает форму слова: 1 час, 2 часа, 5 часов.
+func plural(n int, one, few, many string) string {
+	switch n10, n100 := n%10, n%100; {
+	case n10 == 1 && n100 != 11:
+		return one
+	case n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14):
+		return few
+	}
+	return many
 }
-func longDate(t time.Time) string { return weekdays[t.Weekday()] + ", " + dayLabel(t) }
-func clock(t time.Time) string    { return t.Format("15:04") }
-func stamp(t time.Time) string {
-	return fmt.Sprintf("%d %s %d, %s", t.Day(), months[t.Month()-1], t.Year(), clock(t))
+
+func ago(t time.Time) string {
+	d := time.Since(t)
+	switch {
+	case d < time.Minute:
+		return "только что"
+	case d < time.Hour:
+		n := int(d.Minutes())
+		return fmt.Sprintf("%d %s назад", n, plural(n, "минуту", "минуты", "минут"))
+	case d < 24*time.Hour:
+		n := int(d.Hours())
+		return fmt.Sprintf("%d %s назад", n, plural(n, "час", "часа", "часов"))
+	}
+	n := int(d.Hours() / 24)
+	return fmt.Sprintf("%d %s назад", n, plural(n, "день", "дня", "дней"))
 }
 
 var tplFuncs = template.FuncMap{
 	"rubric": rubricName,
-	"day":    dayLabel,
 	"clock":  clock,
-	"stamp":  stamp,
+	"ago":    ago,
 	"inc":    func(i int) int { return i + 1 },
 }
 

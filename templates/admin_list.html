@@ -13,7 +13,7 @@
     <div class="desk-main">
       <h2><a href="/admin/a/{{.ID}}">{{.Title}}</a>{{if .Pinned}} <span class="tag">закреплён</span>{{end}}{{if .Breaking}} <span class="tag tag-wax">срочно</span>{{end}}</h2>
       <p>{{.Excerpt}}</p>
-      <p class="meta">{{.Byline}}{{if .Rubric}}, {{rubric .Rubric}}{{end}}, прислан {{stamp .CreatedAt}}{{if not .PublishedAt.IsZero}}, вышел {{stamp .PublishedAt}}{{end}}</p>
+      <p class="meta">{{.Byline}}{{if .Rubric}}, {{rubric .Rubric}}{{end}}, прислан {{ago .CreatedAt}}{{if not .PublishedAt.IsZero}}, вышел {{ago .PublishedAt}}{{end}}</p>
     </div>
     <form class="desk-acts" method="post" action="/admin/a/{{.ID}}/quick">
       <input type="hidden" name="back" value="{{$.Status}}">

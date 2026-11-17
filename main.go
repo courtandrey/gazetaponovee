@@ -192,7 +192,6 @@ func (a *App) render(w http.ResponseWriter, r *http.Request, status int, page st
 	}
 	data["V"] = a.version
 	data["Motto"] = a.cfg.Motto
-	data["Today"] = longDate(time.Now())
 	data["Rubrics"] = rubrics
 	data["IsAdmin"] = a.isAdmin(r)
 	data["ElectionOn"] = a.setting("election_visible") == "1"

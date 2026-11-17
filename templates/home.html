@@ -16,28 +16,26 @@
     {{if .Cover}}<a class="lead-pic" href="/a/{{.ID}}" tabindex="-1"><img src="/uploads/{{.Cover}}" alt=""></a>{{end}}
     <h3><a href="/a/{{.ID}}">{{.Title}}</a></h3>
     <p class="lead-text">{{.Excerpt}}</p>
-    <p class="meta">{{.Byline}}, {{stamp .PublishedAt}}</p>
+    <p class="meta">{{.Byline}}</p>
   </article>{{end}}
   </div>
 </section>{{end}}
 
-{{range .Days}}<section class="day">
-  <h2 class="day-head"><span>{{.Label}}</span></h2>
+{{if .Items}}<section class="feed">
   {{range .Items}}<article class="entry">
-    <time class="entry-time" datetime="{{.PublishedAt.Format "2006-01-02T15:04:05Z07:00"}}">{{clock .PublishedAt}}</time>
-    <div class="entry-body">
-      {{if .Cover}}<a class="entry-pic" href="/a/{{.ID}}" tabindex="-1"><img src="/uploads/{{.Cover}}" alt="" loading="lazy"></a>{{end}}
-      <h3>{{if .Breaking}}<b class="wax">Срочно</b> {{end}}<a href="/a/{{.ID}}">{{.Title}}</a></h3>
-      <p>{{.Excerpt}}</p>
-      <p class="meta">{{.Byline}}{{if .Rubric}}, <a href="/r/{{.Rubric}}">{{rubric .Rubric}}</a>{{end}}</p>
-    </div>
+    {{if .Cover}}<a class="entry-pic" href="/a/{{.ID}}" tabindex="-1"><img src="/uploads/{{.Cover}}" alt="" loading="lazy"></a>{{end}}
+    <h3>{{if .Breaking}}<b class="wax">Срочно</b> {{end}}<a href="/a/{{.ID}}">{{.Title}}</a></h3>
+    <p>{{.Excerpt}}</p>
+    <p class="meta">{{.Byline}}{{if .Rubric}}, <a href="/r/{{.Rubric}}">{{rubric .Rubric}}</a>{{end}}</p>
   </article>{{end}}
-</section>{{else}}
-{{if not .Pinned}}<p class="empty">Здесь пока пусто. <a href="/submit">Пришлите материал</a> — редакция прочтёт.</p>{{end}}
-{{end}}
+</section>{{else if .Rubric}}
+<p class="empty">Подшивки этой рубрики сгорели вместе со всем архивом. <a href="/submit">Пришлите материал</a>, и рубрика начнётся заново.</p>
+{{else if not .Pinned}}
+<p class="empty">Здесь пока пусто. <a href="/submit">Пришлите материал</a>, и редакция его прочтёт.</p>{{end}}
 
 {{if or .Prev .Next}}<nav class="pager" aria-label="Страницы">
   {{if .Prev}}<a href="{{if .Rubric}}/r/{{.Rubric}}{{else}}/{{end}}?p={{.Prev}}">Новее</a>{{else}}<span></span>{{end}}
   {{if .Next}}<a href="{{if .Rubric}}/r/{{.Rubric}}{{else}}/{{end}}?p={{.Next}}">Раньше</a>{{end}}
 </nav>{{end}}
 {{end}}
+

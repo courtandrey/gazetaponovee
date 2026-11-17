@@ -92,6 +92,9 @@ func TestFlow(t *testing.T) {
 	if err != nil || resp.StatusCode != 200 {
 		t.Fatalf("отправка: %v %v", err, resp.StatusCode)
 	}
+	if _, html := get("/"); !strings.Contains(html, "Здесь пока пусто") {
+		t.Error("пустая лента без приглашения прислать материал")
+	}
 	// не картинка отклоняется
 	body, ctype = multipartBody(t, map[string]string{"title": "Т", "body": "Т"}, "x.png", []byte("<html>не картинка</html>"))
 	if resp, _ := client.Post(srv.URL+"/submit", ctype, body); resp.StatusCode != 422 {
@@ -128,6 +131,9 @@ func TestFlow(t *testing.T) {
 	_, html := get("/")
 	if !strings.Contains(html, "Драконья руда") || !strings.Contains(html, "Главное") || !strings.Contains(html, "/uploads/") {
 		t.Errorf("опубликованный закреплённый материал не на главной")
+	}
+	if strings.Contains(html, " года") {
+		t.Error("на главной не должно быть пожара и календарных дат")
 	}
 	if _, html := get("/a/1"); !strings.Contains(html, "Очевидец") || !strings.Contains(html, "<p>Второй.</p>") {
 		t.Error("страница материала неполная")

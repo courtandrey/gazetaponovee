@@ -220,11 +220,6 @@ func readArticleInput(r *http.Request) (articleInput, error) {
 
 // --- Публичные страницы ---
 
-type dayGroup struct {
-	Label string
-	Items []Article
-}
-
 func (a *App) home(w http.ResponseWriter, r *http.Request) {
 	slug := r.PathValue("slug")
 	if slug != "" && rubricName(slug) == "" {
@@ -255,15 +250,7 @@ func (a *App) home(w http.ResponseWriter, r *http.Request) {
 	if page > 1 {
 		data["Prev"] = page - 1
 	}
-	var days []dayGroup
-	for _, it := range items {
-		label := dayLabel(it.PublishedAt)
-		if len(days) == 0 || days[len(days)-1].Label != label {
-			days = append(days, dayGroup{Label: label})
-		}
-		days[len(days)-1].Items = append(days[len(days)-1].Items, it)
-	}
-	data["Days"] = days
+	data["Items"] = items
 	a.render(w, r, http.StatusOK, "home", data)
 }
 

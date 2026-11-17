@@ -4,7 +4,7 @@
   {{if ne .A.Status "published"}}<p class="notice">Материал не опубликован: его видит только редакция.</p>{{end}}
   {{if .A.Rubric}}<p class="story-rubric"><a href="/r/{{.A.Rubric}}">{{rubric .A.Rubric}}</a></p>{{end}}
   <h1>{{.A.Title}}</h1>
-  <p class="meta">{{.A.Byline}}, {{if .A.PublishedAt.IsZero}}{{stamp .A.CreatedAt}}{{else}}{{stamp .A.PublishedAt}}{{end}}</p>
+  <p class="meta">{{.A.Byline}}</p>
   {{if .A.Cover}}<figure class="story-cover"><img src="/uploads/{{.A.Cover}}" alt=""></figure>{{end}}
   <div class="prose">{{.A.HTML}}</div>
   {{if .IsAdmin}}<p class="story-edit"><a class="btn" href="/admin/a/{{.A.ID}}">Править материал</a></p>{{end}}
