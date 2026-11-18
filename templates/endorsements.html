@@ -1,9 +1,7 @@
-{{define "title"}}{{with .G.Selected}}{{.Name}}. {{end}}Эндорсменты и донаты. {{end}}
+{{define "title"}}{{with .G.Selected}}{{.Name}}. {{end}}Публичный Надзор. {{end}}
 {{define "content"}}{{$g := .G}}
 <section class="endorse">
-  <h1>Эндорсменты и донаты</h1>
-  <p class="meta">Кто кому передал популярность и деньги — по сообщениям GM-бота в теме «Эндорсменты &amp; Донаты».
-    {{if not $g.Synced.IsZero}}Данные обновляются раз в 20 минут, последнее обновление — {{ago $g.Synced}}.{{end}}</p>
+  <h1>Публичный Надзор</h1>
 
   <nav class="tabs" aria-label="Вид переводов">
     <a href="/endorsements{{with $g.Selected}}?who={{.Name}}{{end}}#graph"{{if eq $g.Kind ""}} aria-current="page"{{end}}>Все переводы</a>
@@ -21,22 +19,20 @@
       {{range $g.Edges}}{{if .D}}<path class="{{.Class}}" d="{{.D}}" stroke-width="{{.Width}}" marker-end="url(#arr-{{.Kind}})"><title>{{.From}} → {{.To}}: {{if eq .Kind "money"}}деньги{{else}}популярность{{end}} {{.Sum}}{{if gt .Count 1}} ({{.Count}} {{plural .Count "перевод" "перевода" "переводов"}}){{end}}</title></path>
       {{end}}{{end}}
       {{range $g.Nodes}}<a class="{{.Class}}" href="/endorsements?who={{.Name}}{{if $g.Kind}}&amp;k={{$g.Kind}}{{end}}#graph">
-        <title>{{.Name}}{{if .Role}} — {{.Role}}{{end}}. Получил: ❤ {{index .Got 0}}, ♦ {{index .Got 1}}. Передал: ❤ {{index .Gave 0}}, ♦ {{index .Gave 1}}.</title>
+        <title>{{.Name}}{{if .Role}} — {{.Role}}{{end}}. Получил(а): ❤ {{index .Got 0}}, ♦ {{index .Got 1}}. Передал(а): ❤ {{index .Gave 0}}, ♦ {{index .Gave 1}}.</title>
         <circle cx="{{.X}}" cy="{{.Y}}" r="{{.R}}"/>
         <text x="{{.X}}" y="{{.LabelY}}">{{.Name}}</text>
       </a>
       {{end}}
     </svg></div>
-    <figcaption>Стрелка ведёт от того, кто передал, к тому, кто получил; чем толще линия, тем больше передано.
-      Размер кружка — сколько участник получил. Нажмите на участника, чтобы увидеть его переводы.</figcaption>
   </figure>
 
   {{with $g.Selected}}<section class="who" aria-labelledby="who-name">
     <h2 id="who-name">{{.Name}}</h2>
     {{if .Role}}<p class="meta">{{.Role}}</p>{{end}}
     <dl class="who-sums">
-      <div><dt>Получил</dt><dd><span class="mark mark-pop">❤</span>{{index .Got 0}} <span class="mark mark-money">♦</span>{{index .Got 1}}</dd></div>
-      <div><dt>Передал</dt><dd><span class="mark mark-pop">❤</span>{{index .Gave 0}} <span class="mark mark-money">♦</span>{{index .Gave 1}}</dd></div>
+      <div><dt>Получил(а)</dt><dd><span class="mark mark-pop">❤</span>{{index .Got 0}} <span class="mark mark-money">♦</span>{{index .Got 1}}</dd></div>
+      <div><dt>Передал(а)</dt><dd><span class="mark mark-pop">❤</span>{{index .Gave 0}} <span class="mark mark-money">♦</span>{{index .Gave 1}}</dd></div>
     </dl>
     <p><a href="/endorsements{{if $g.Kind}}?k={{$g.Kind}}{{end}}#graph">← Все участники</a></p>
   </section>{{end}}

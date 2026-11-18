@@ -172,7 +172,6 @@ type GraphView struct {
 	Selected *GraphNode
 	Log      []Transfer
 	Total    int
-	Synced   time.Time
 }
 
 func kindIndex(kind string) int {
@@ -358,11 +357,6 @@ func (a *App) graphView(kind, who string) GraphView {
 	}
 	all := a.listTransfers()
 	v := GraphView{Kind: kind}
-	if s := a.setting("transfers_synced"); s != "" {
-		var ts int64
-		fmt.Sscan(s, &ts)
-		v.Synced = time.Unix(ts, 0)
-	}
 
 	// Узлы и раскладка — по всем переводам, чтобы фильтр не двигал картину.
 	byName := map[string]*GraphNode{}

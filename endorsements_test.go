@@ -69,7 +69,7 @@ func TestEndorsements(t *testing.T) {
 
 	html := get("/endorsements")
 	for _, want := range []string{`marker-end="url(#arr-pop)"`, `marker-end="url(#arr-money)"`, "Феррдо Руджа",
-		"&lt;b&gt;займ&lt;/b&gt;", "/endorsements?who=%d0%93%d1%80%d0%b5%d0%b3", "последнее обновление"} {
+		"&lt;b&gt;займ&lt;/b&gt;", "/endorsements?who=%d0%93%d1%80%d0%b5%d0%b3"} {
 		if !strings.Contains(html, want) {
 			t.Errorf("нет %q", want)
 		}
