@@ -2,7 +2,8 @@
 
 A small news site for a fictional outlet: chronological feed with pinned stories and a
 «Срочно» strip, an open submission form with image upload, an admin desk for moderation,
-and an election-night section (electoral map of the Nine States, score to 56 of 111, Senate board).
+an election-night section (electoral map of the Nine States, score to 56 of 111, Senate board),
+and `/endorsements` — a directed graph of popularity and money transfers between characters.
 
 One Go binary (~14 MB image) with SQLite and uploads in a Docker volume, behind Caddy for HTTPS.
 No JavaScript, no external requests: fonts are bundled.
@@ -30,6 +31,22 @@ Passwords are 8–72 characters. Then sign in at `/admin/login` (link in the foo
   delete, pin to the top of the front page, mark as «Срочно». Write articles directly.
 - **Выборы** — show/hide the section (hidden by default; admins can preview it at `/elections`),
   set candidates with colours, call or un-call each state, track Senate races, reset results.
+
+## Endorsements (`/endorsements`)
+
+The page mirrors GM-bot's posts in the «Эндорсменты & Донаты» topic of the game forum
+(`❤️ Популярность: A (роль) → B (роль), 2` and `♦️ Деньги: …`). Each arrow goes from giver to
+receiver and is labelled with the total amount; clicking a person shows their transfer log.
+The data is not live: `tools/endorsements_sync.py` runs on the server (where `tdl` is logged in),
+exports the whole topic and posts it to the internal API. The site replaces its copy each time,
+so messages deleted from the topic disappear from the page too. Add to the server's crontab:
+
+```cron
+*/20 * * * * python3 /path/to/gazetaponovee/tools/endorsements_sync.py >> ~/endorsements_sync.log 2>&1
+```
+
+`--dry` prints what would be sent. Environment overrides: `TDL`, `ENDORSE_CHAT`, `ENDORSE_TOPIC`,
+`ENDORSE_BOT`, `INTERNAL_PORT` (or `GAZETA_INTERNAL` for a full URL).
 
 ## Configuration (`.env`)
 

@@ -21,6 +21,7 @@
   --wax: #9e1b32;
   --muted: #5f4b6e;
   --rule: rgba(42, 19, 56, .22);
+  --money: #8a6a1f;
   --text: "Old Standard", "Times New Roman", serif;
   --display: "Ruslan", "Old Standard", serif;
 }
@@ -227,6 +228,48 @@ code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .85em; 
 .calls li { display: grid; grid-template-columns: 4.2rem 1fr; padding: .45rem 0; border-bottom: 1px solid var(--rule); }
 .calls time { font-weight: 700; color: var(--purple); font-variant-numeric: tabular-nums; }
 
+/* Эндорсменты */
+.endorse h1 { font: 400 clamp(1.8rem, 5vw, 2.6rem)/1.1 var(--display); color: var(--purple); margin-bottom: .6rem; }
+.endorse > .meta { margin-bottom: 1.2rem; }
+.endorse h2 { font-size: 1.4rem; margin-bottom: .6rem; }
+.mark { display: inline-block; width: 1.1em; text-align: center; margin-right: .2em; font-style: normal; }
+.mark-pop { color: var(--wax); }
+.mark-money { color: var(--money); }
+.graph-frame { margin: 0 0 1.8rem; border: 3px double var(--gold); background: var(--bone); padding: .5rem; scroll-margin-top: 1rem; }
+.graph-scroll { overflow-x: auto; }
+.graph { display: block; width: 100%; min-width: 40rem; height: auto; }
+.graph-frame figcaption { font-size: .95rem; font-style: italic; color: var(--muted); text-align: center; padding: .4rem .5rem .1rem; }
+.edge { fill: none; stroke-linecap: round; opacity: .75; }
+.edge-pop { stroke: var(--wax); }
+.edge-money { stroke: var(--money); stroke-dasharray: 7 4; }
+.arr-pop { fill: var(--wax); }
+.arr-money { fill: var(--money); }
+.edge:hover { opacity: 1; }
+.node circle { fill: var(--purple); stroke: var(--gold); stroke-width: 2; }
+.node text { font: 700 13px var(--text); fill: var(--ink); text-anchor: middle; paint-order: stroke; stroke: var(--bone); stroke-width: 4px; stroke-linejoin: round; }
+.node:hover circle, .node:focus-visible circle { fill: var(--night); stroke: var(--gold-bright); }
+.node:focus-visible { outline: none; }
+.node.sel circle { fill: var(--wax); stroke: var(--night); stroke-width: 3; }
+.node.sel text { font-size: 15px; }
+.dim { opacity: .15; }
+.edge.dim { opacity: .1; }
+.off { display: none; }
+.who { background: var(--bone); border: 1px solid var(--rule); border-top: 3px double var(--gold); padding: 1rem 1.4rem; margin-bottom: 1.8rem; }
+.who h2 { font-size: 1.7rem; margin-bottom: .2rem; }
+.who p { margin: .4rem 0 0; }
+.who-sums { display: flex; flex-wrap: wrap; gap: .4rem 2.5rem; margin: .7rem 0 0; }
+.who-sums div { display: flex; gap: .7rem; align-items: baseline; }
+.who-sums dt { font-style: italic; color: var(--muted); }
+.who-sums dd { margin: 0; font-weight: 700; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+.tlog-list { list-style: none; margin: 0; padding: 0; }
+.tlog-list li { display: grid; grid-template-columns: 3.6rem 1.4rem 1fr auto; gap: .2rem .4rem; align-items: baseline; padding: .55rem 0; border-bottom: 1px solid var(--rule); }
+.tlog-list time { font-weight: 700; color: var(--purple); font-variant-numeric: tabular-nums; }
+.tlog-main { min-width: 0; display: grid; }
+.tlog-who a { color: var(--ink); }
+.tlog-who a[aria-current] { font-weight: 700; color: var(--wax); }
+.tlog-main q { font-style: italic; color: var(--muted); font-size: 1rem; overflow-wrap: anywhere; }
+.tlog-n { font-size: 1.2rem; font-variant-numeric: tabular-nums; min-width: 1.6rem; text-align: right; }
+
 @media (max-width: 34rem) {
   body { font-size: 1.05rem; }
   .entry { padding-left: 1.1rem; }
@@ -236,4 +279,6 @@ code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .85em; 
   .desk-main { grid-column: 1; }
   .pinned, .teaser, .panel { padding-inline: .9rem; }
   .tabs .btn { margin-left: 0; }
+  .tlog-list li { grid-template-columns: 3.2rem 1.2rem 1fr auto; }
+  .who { padding-inline: .9rem; }
 }

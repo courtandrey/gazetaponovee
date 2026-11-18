@@ -66,6 +66,7 @@ var tplFuncs = template.FuncMap{
 	"clock":  clock,
 	"ago":    ago,
 	"inc":    func(i int) int { return i + 1 },
+	"plural": plural,
 }
 
 // --- Разметка материалов ---

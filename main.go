@@ -89,6 +89,9 @@ CREATE TABLE IF NOT EXISTS state_calls(
 CREATE TABLE IF NOT EXISTS senate_races(
 	id INTEGER PRIMARY KEY, state TEXT NOT NULL, contenders TEXT NOT NULL DEFAULT '',
 	winner TEXT NOT NULL DEFAULT '', party TEXT NOT NULL DEFAULT '', color TEXT NOT NULL DEFAULT '', called_at INTEGER);
+CREATE TABLE IF NOT EXISTS transfers(
+	id INTEGER PRIMARY KEY, at INTEGER NOT NULL, kind TEXT NOT NULL, src TEXT NOT NULL, src_role TEXT NOT NULL DEFAULT '',
+	dst TEXT NOT NULL, dst_role TEXT NOT NULL DEFAULT '', amount INTEGER NOT NULL, note TEXT NOT NULL DEFAULT '');
 `
 
 func newApp(cfg Config) (*App, error) {
@@ -147,6 +150,7 @@ func (a *App) routes() http.Handler {
 	mux.HandleFunc("GET /submit", a.submitForm)
 	mux.HandleFunc("POST /submit", a.submit)
 	mux.HandleFunc("GET /elections", a.elections)
+	mux.HandleFunc("GET /endorsements", a.endorsements)
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) { io.WriteString(w, "ok") })
 
 	mux.Handle("GET /static/", cached(http.FileServerFS(assets)))

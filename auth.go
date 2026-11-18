@@ -133,6 +133,7 @@ func (a *App) internalRoutes() http.Handler {
 		}
 		fmt.Fprintf(w, "админ %q сохранён\n", in.Username)
 	})
+	mux.HandleFunc("POST /internal/endorsements", a.internalTransfers)
 	return mux
 }
 
