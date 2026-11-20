@@ -7,13 +7,15 @@ import (
 	"io"
 	"math"
 	"net/http"
+	"net/url"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
 
-// Эндорсменты и донаты: переводы популярности и денег, которые GM-bot публикует в теме
+// Публичный Надзор (эндорсменты и донаты): переводы популярности и денег, которые GM-bot публикует в теме
 // «Эндорсменты & Донаты». Выгрузку раз в 20 минут делает tools/endorsements_sync.py через tdl
 // и отправляет в служебный API; сайт хранит последний снимок целиком.
 
@@ -172,6 +174,59 @@ type GraphView struct {
 	Selected *GraphNode
 	Log      []Transfer
 	Total    int
+	Zoom     int // 0 — вписать в ширину, дальше крупнее; см. zoomScale
+}
+
+// Масштаб графа без JS: уровень приходит параметром z и сохраняется во всех ссылках.
+var zoomScale = []float64{1, 1.5, 2, 3, 4}
+
+func (v GraphView) ZoomPct() int      { return int(zoomScale[v.Zoom] * 100) }
+func (v GraphView) ZoomMinRem() int   { return int(zoomScale[v.Zoom] * 40) }
+func (v GraphView) CanZoomIn() bool   { return v.Zoom < len(zoomScale)-1 }
+func (v GraphView) CanZoomOut() bool  { return v.Zoom > 0 }
+func (v GraphView) ZoomInLevel() int  { return v.Zoom + 1 }
+func (v GraphView) ZoomOutLevel() int { return v.Zoom - 1 }
+
+// Href — ссылка на страницу с тем же масштабом; kind и who можно заменить.
+func (v GraphView) Href(kind, who string, zoom int) string {
+	q := url.Values{}
+	if kind != "" {
+		q.Set("k", kind)
+	}
+	if who != "" {
+		q.Set("who", who)
+	}
+	if zoom > 0 && zoom < len(zoomScale) {
+		q.Set("z", fmt.Sprint(zoom))
+	}
+	h := "/endorsements"
+	if len(q) > 0 {
+		h += "?" + q.Encode()
+	}
+	return h + "#graph"
+}
+
+// Link — та же страница с другим участником (пустое имя — все участники).
+func (v GraphView) Link(who string) string {
+	return v.Href(v.Kind, who, v.Zoom)
+}
+
+// Tab — та же страница с другим видом переводов.
+func (v GraphView) Tab(kind string) string {
+	who := ""
+	if v.Selected != nil {
+		who = v.Selected.Name
+	}
+	return v.Href(kind, who, v.Zoom)
+}
+
+// ZoomTo — та же страница с другим масштабом.
+func (v GraphView) ZoomTo(zoom int) string {
+	who := ""
+	if v.Selected != nil {
+		who = v.Selected.Name
+	}
+	return v.Href(v.Kind, who, zoom)
 }
 
 func kindIndex(kind string) int {
@@ -468,5 +523,9 @@ func (a *App) graphView(kind, who string) GraphView {
 
 func (a *App) endorsements(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
-	a.render(w, r, http.StatusOK, "endorsements", map[string]any{"G": a.graphView(q.Get("k"), q.Get("who"))})
+	g := a.graphView(q.Get("k"), q.Get("who"))
+	if z, err := strconv.Atoi(q.Get("z")); err == nil && z > 0 && z < len(zoomScale) {
+		g.Zoom = z
+	}
+	a.render(w, r, http.StatusOK, "endorsements", map[string]any{"G": g})
 }

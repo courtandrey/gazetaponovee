@@ -20,7 +20,7 @@
 <nav class="nav" aria-label="Разделы">
   <a href="/">Все новости</a>
   {{range .Rubrics}}<a href="/r/{{.Slug}}">{{.Name}}</a>{{end}}
-  <a href="/endorsements">Эндорсменты</a>
+  <a href="/endorsements">Публичный Надзор</a>
   {{if .ElectionOn}}<a class="nav-vote" href="/elections">Выборы</a>{{end}}
   <a class="nav-send" href="/submit">Прислать материал</a>
 </nav>

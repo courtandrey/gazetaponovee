@@ -4,21 +4,27 @@
   <h1>Публичный Надзор</h1>
 
   <nav class="tabs" aria-label="Вид переводов">
-    <a href="/endorsements{{with $g.Selected}}?who={{.Name}}{{end}}#graph"{{if eq $g.Kind ""}} aria-current="page"{{end}}>Все переводы</a>
-    <a href="/endorsements?k=pop{{with $g.Selected}}&amp;who={{.Name}}{{end}}#graph"{{if eq $g.Kind "pop"}} aria-current="page"{{end}}><span class="mark mark-pop">❤</span>Популярность</a>
-    <a href="/endorsements?k=money{{with $g.Selected}}&amp;who={{.Name}}{{end}}#graph"{{if eq $g.Kind "money"}} aria-current="page"{{end}}><span class="mark mark-money">♦</span>Деньги</a>
+    <a href="{{$g.Tab ""}}"{{if eq $g.Kind ""}} aria-current="page"{{end}}>Все переводы</a>
+    <a href="{{$g.Tab "pop"}}"{{if eq $g.Kind "pop"}} aria-current="page"{{end}}><span class="mark mark-pop">❤</span>Популярность</a>
+    <a href="{{$g.Tab "money"}}"{{if eq $g.Kind "money"}} aria-current="page"{{end}}><span class="mark mark-money">♦</span>Деньги</a>
   </nav>
 
   {{if $g.Nodes}}
   <figure class="graph-frame" id="graph">
-    <div class="graph-scroll"><svg class="graph" viewBox="0 0 {{$g.W}} {{$g.H}}" role="img" aria-label="Граф переводов: стрелка идёт от того, кто передал, к тому, кто получил">
+    <nav class="zoom" aria-label="Масштаб графа">
+      {{if $g.CanZoomOut}}<a href="{{$g.ZoomTo $g.ZoomOutLevel}}" title="Мельче" aria-label="Мельче">−</a>{{else}}<span aria-disabled="true">−</span>{{end}}
+      <span class="zoom-level">{{$g.ZoomPct}}%</span>
+      {{if $g.CanZoomIn}}<a href="{{$g.ZoomTo $g.ZoomInLevel}}" title="Крупнее" aria-label="Крупнее">+</a>{{else}}<span aria-disabled="true">+</span>{{end}}
+      {{if $g.CanZoomOut}}<a class="zoom-fit" href="{{$g.ZoomTo 0}}">Вписать</a>{{end}}
+    </nav>
+    <div class="graph-scroll{{if $g.Zoom}} zoomed{{end}}"><svg class="graph"{{if $g.Zoom}} style="width: {{$g.ZoomPct}}%; min-width: {{$g.ZoomMinRem}}rem"{{end}} viewBox="0 0 {{$g.W}} {{$g.H}}" role="img" aria-label="Граф переводов: стрелка идёт от того, кто передал, к тому, кто получил">
       <defs>
         <marker id="arr-pop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path class="arr-pop" d="M0 0L10 5L0 10z"/></marker>
         <marker id="arr-money" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path class="arr-money" d="M0 0L10 5L0 10z"/></marker>
       </defs>
       {{range $g.Edges}}{{if .D}}<path class="{{.Class}}" d="{{.D}}" stroke-width="{{.Width}}" marker-end="url(#arr-{{.Kind}})"><title>{{.From}} → {{.To}}: {{if eq .Kind "money"}}деньги{{else}}популярность{{end}} {{.Sum}}{{if gt .Count 1}} ({{.Count}} {{plural .Count "перевод" "перевода" "переводов"}}){{end}}</title></path>
       {{end}}{{end}}
-      {{range $g.Nodes}}<a class="{{.Class}}" href="/endorsements?who={{.Name}}{{if $g.Kind}}&amp;k={{$g.Kind}}{{end}}#graph">
+      {{range $g.Nodes}}<a class="{{.Class}}" href="{{$g.Link .Name}}">
         <title>{{.Name}}{{if .Role}} — {{.Role}}{{end}}. Получил(а): ❤ {{index .Got 0}}, ♦ {{index .Got 1}}. Передал(а): ❤ {{index .Gave 0}}, ♦ {{index .Gave 1}}.</title>
         <circle cx="{{.X}}" cy="{{.Y}}" r="{{.R}}"/>
         <text x="{{.X}}" y="{{.LabelY}}">{{.Name}}</text>
@@ -34,7 +40,7 @@
       <div><dt>Получил(а)</dt><dd><span class="mark mark-pop">❤</span>{{index .Got 0}} <span class="mark mark-money">♦</span>{{index .Got 1}}</dd></div>
       <div><dt>Передал(а)</dt><dd><span class="mark mark-pop">❤</span>{{index .Gave 0}} <span class="mark mark-money">♦</span>{{index .Gave 1}}</dd></div>
     </dl>
-    <p><a href="/endorsements{{if $g.Kind}}?k={{$g.Kind}}{{end}}#graph">← Все участники</a></p>
+    <p><a href="{{$g.Link ""}}">← Все участники</a></p>
   </section>{{end}}
 
   <section class="tlog">
@@ -44,8 +50,8 @@
         <time>{{clock .At}}</time>
         <span class="mark mark-{{.Kind}}" title="{{.KindName}}">{{if eq .Kind "money"}}♦{{else}}❤{{end}}</span>
         <span class="tlog-main">
-          <span class="tlog-who"><a href="/endorsements?who={{.From}}{{if $g.Kind}}&amp;k={{$g.Kind}}{{end}}#graph"{{if and $g.Selected (eq .From $g.Selected.Name)}} aria-current="true"{{end}}>{{.From}}</a>
-            → <a href="/endorsements?who={{.To}}{{if $g.Kind}}&amp;k={{$g.Kind}}{{end}}#graph"{{if and $g.Selected (eq .To $g.Selected.Name)}} aria-current="true"{{end}}>{{.To}}</a></span>
+          <span class="tlog-who"><a href="{{$g.Link .From}}"{{if and $g.Selected (eq .From $g.Selected.Name)}} aria-current="true"{{end}}>{{.From}}</a>
+            → <a href="{{$g.Link .To}}"{{if and $g.Selected (eq .To $g.Selected.Name)}} aria-current="true"{{end}}>{{.To}}</a></span>
           {{if .Note}}<q>{{.Note}}</q>{{end}}
         </span>
         <b class="tlog-n">{{.Amount}}</b>

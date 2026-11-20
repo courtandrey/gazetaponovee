@@ -69,7 +69,7 @@ func TestEndorsements(t *testing.T) {
 
 	html := get("/endorsements")
 	for _, want := range []string{`marker-end="url(#arr-pop)"`, `marker-end="url(#arr-money)"`, "Феррдо Руджа",
-		"&lt;b&gt;займ&lt;/b&gt;", "/endorsements?who=%d0%93%d1%80%d0%b5%d0%b3"} {
+		"&lt;b&gt;займ&lt;/b&gt;", "/endorsements?who=%D0%93%D1%80%D0%B5%D0%B3"} {
 		if !strings.Contains(html, want) {
 			t.Errorf("нет %q", want)
 		}
@@ -89,6 +89,21 @@ func TestEndorsements(t *testing.T) {
 	}
 	if html := get("/endorsements?who=Грег+Нобель&k=money"); !strings.Contains(html, `class="node sel"`) || !strings.Contains(html, "Переводы участника") {
 		t.Error("страница участника")
+	}
+
+	// масштаб: уровень сохраняется в ссылках, за пределами шкалы игнорируется
+	html = get("/endorsements?z=2&k=money")
+	for _, want := range []string{`style="width: 200%; min-width: 80rem"`, "z=2", `href="/endorsements?k=money&amp;z=3#graph"`,
+		`href="/endorsements?k=money&amp;z=1#graph"`, `href="/endorsements?k=money#graph">Вписать`} {
+		if !strings.Contains(html, want) {
+			t.Errorf("масштаб: нет %q", want)
+		}
+	}
+	if html := get("/endorsements?z=4"); strings.Contains(html, "z=5") || !strings.Contains(html, `aria-disabled="true">+`) {
+		t.Error("максимальный масштаб")
+	}
+	if html := get("/endorsements?z=99"); strings.Contains(html, "zoomed") || strings.Contains(html, "Вписать") {
+		t.Error("недопустимый масштаб")
 	}
 
 	// новый снимок без удалённых сообщений заменяет старый

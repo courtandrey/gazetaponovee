@@ -178,11 +178,15 @@ def like_peers(cookie):
     """Каждый пост и ответ группы (сторонники + @thegazeta) получает ровно один лайк
     от одного случайного другого профиля группы; обработанные посты запоминаются."""
     auth = dict(load(KEYS, {}))
-    auth[MAIN] = cookie
+    reader = cookie or next(iter(auth.values()))
+    if cookie:
+        auth[MAIN] = cookie
+    else:
+        print("TRUTH_COOKIE не задан: посты @thegazeta лайкают сторонники, сам @thegazeta не лайкает")
     done = set(load(PEER_DONE, []))
-    for h in auth:
+    for h in [*auth, *([] if cookie else [MAIN])]:
         for rep in ("0", "1"):  # replies=0 — посты, replies=1 — только ответы
-            resp = ok(*call("GET", f"/users/{h}/posts?replies={rep}", cookie), f"посты {h}")
+            resp = ok(*call("GET", f"/users/{h}/posts?replies={rep}", reader), f"посты {h}")
             for p in resp["posts"]:
                 if p.get("repost_of") or p.get("deleted") or p["id"] in done:
                     continue
@@ -281,7 +285,7 @@ if __name__ == "__main__":
     elif cmd == "like-main":
         like_main(*rng(1, (2, 4)))
     elif cmd == "like-peers":
-        like_peers(os.environ.get("TRUTH_COOKIE") or sys.exit("Задайте TRUTH_COOKIE"))
+        like_peers(os.environ.get("TRUTH_COOKIE"))
     elif cmd == "mentions":
         mentions()
     elif cmd == "schedule" and len(a) > 1:
