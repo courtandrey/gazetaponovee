@@ -236,15 +236,10 @@ code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .85em; 
 .mark-pop { color: var(--wax); }
 .mark-money { color: var(--money); }
 .graph-frame { margin: 0 0 1.8rem; border: 3px double var(--gold); background: var(--bone); padding: .5rem; scroll-margin-top: 1rem; }
-.graph-scroll { overflow-x: auto; }
-.graph-scroll.zoomed { overflow: auto; max-height: 85vh; }
-.zoom { display: flex; align-items: center; justify-content: flex-end; gap: .4rem; margin: 0 0 .4rem; font-variant-numeric: tabular-nums; }
-.zoom a, .zoom span[aria-disabled] { display: inline-grid; place-items: center; min-width: 2rem; height: 2rem; padding: 0 .5rem; border: 1px solid var(--gold); background: var(--vellum); color: var(--purple); font-weight: 700; text-decoration: none; }
-.zoom a:hover, .zoom a:focus-visible { background: var(--purple); color: var(--bone); }
-.zoom span[aria-disabled] { opacity: .35; }
-.zoom-level { min-width: 3.2rem; text-align: center; color: var(--muted); font-size: .95rem; }
-.zoom a.zoom-fit { font-weight: 400; font-size: .95rem; }
-.graph { display: block; width: 100%; min-width: 40rem; height: auto; }
+.graph-scroll { overflow: hidden; }
+.graph { display: block; width: 100%; height: auto; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+.graph.dragging { cursor: grabbing; }
+.graph.dragging a { pointer-events: none; }
 .graph-frame figcaption { font-size: .95rem; font-style: italic; color: var(--muted); text-align: center; padding: .4rem .5rem .1rem; }
 .edge { fill: none; stroke-linecap: round; opacity: .75; }
 .edge-pop { stroke: var(--wax); }

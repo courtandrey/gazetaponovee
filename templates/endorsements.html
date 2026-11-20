@@ -11,13 +11,7 @@
 
   {{if $g.Nodes}}
   <figure class="graph-frame" id="graph">
-    <nav class="zoom" aria-label="Масштаб графа">
-      {{if $g.CanZoomOut}}<a href="{{$g.ZoomTo $g.ZoomOutLevel}}" title="Мельче" aria-label="Мельче">−</a>{{else}}<span aria-disabled="true">−</span>{{end}}
-      <span class="zoom-level">{{$g.ZoomPct}}%</span>
-      {{if $g.CanZoomIn}}<a href="{{$g.ZoomTo $g.ZoomInLevel}}" title="Крупнее" aria-label="Крупнее">+</a>{{else}}<span aria-disabled="true">+</span>{{end}}
-      {{if $g.CanZoomOut}}<a class="zoom-fit" href="{{$g.ZoomTo 0}}">Вписать</a>{{end}}
-    </nav>
-    <div class="graph-scroll{{if $g.Zoom}} zoomed{{end}}"><svg class="graph"{{if $g.Zoom}} style="width: {{$g.ZoomPct}}%; min-width: {{$g.ZoomMinRem}}rem"{{end}} viewBox="0 0 {{$g.W}} {{$g.H}}" role="img" aria-label="Граф переводов: стрелка идёт от того, кто передал, к тому, кто получил">
+    <div class="graph-scroll"><svg class="graph" id="graph-svg" viewBox="0 0 {{$g.W}} {{$g.H}}" role="img" aria-label="Граф переводов: стрелка идёт от того, кто передал, к тому, кто получил">
       <defs>
         <marker id="arr-pop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path class="arr-pop" d="M0 0L10 5L0 10z"/></marker>
         <marker id="arr-money" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path class="arr-money" d="M0 0L10 5L0 10z"/></marker>
@@ -31,7 +25,9 @@
       </a>
       {{end}}
     </svg></div>
+    <figcaption class="graph-hint">Колесо мыши или два пальца — масштаб, перетаскивание — сдвиг, двойной щелчок — вписать.</figcaption>
   </figure>
+  <script src="/static/graph.js?v={{$.V}}" defer></script>
 
   {{with $g.Selected}}<section class="who" aria-labelledby="who-name">
     <h2 id="who-name">{{.Name}}</h2>
